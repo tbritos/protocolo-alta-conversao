@@ -1,0 +1,1588 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Protocolo Alta Conversão — by Felippe Nóbrega</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --obsidiana: #0D0D0D;
+    --alabastro: #FAF7F2;
+    --champagne: #A88752;
+    --champagne-light: #C9A96E;
+    --grafite: #3A3A3A;
+    --nevoa: #C9C3B8;
+    --creme: #F0EBE0;
+    --serif: 'Playfair Display', Georgia, serif;
+    --sans: 'Inter', Helvetica, sans-serif;
+    --mono: 'IBM Plex Mono', monospace;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--alabastro);
+    color: var(--obsidiana);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── UTILIDADES ── */
+  .container { max-width: 1080px; margin: 0 auto; padding: 0 2rem; }
+  .container--narrow { max-width: 720px; margin: 0 auto; padding: 0 2rem; }
+
+  .tag {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--champagne);
+    border: 1px solid var(--champagne);
+    padding: 0.3rem 0.75rem;
+    margin-bottom: 2rem;
+  }
+
+  .rule { width: 100%; height: 1px; background: var(--nevoa); margin: 3rem 0; }
+  .rule--champagne { background: var(--champagne); opacity: 0.4; }
+
+  /* ── FADE IN ── */
+  .fade-up {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+  /* ════════════════════════════════════════
+     SEÇÃO 1 — HERO
+  ════════════════════════════════════════ */
+  #hero {
+    background: var(--obsidiana);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    padding: 6rem 0 5rem;
+  }
+
+  #hero::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px;
+    height: 100%;
+    background: var(--champagne);
+  }
+
+  #hero::after {
+    content: 'PROTOCOLO';
+    position: absolute;
+    right: -2rem;
+    top: 50%;
+    transform: translateY(-50%) rotate(90deg);
+    font-family: var(--serif);
+    font-size: 7rem;
+    letter-spacing: 0.3em;
+    color: rgba(168,135,82,0.06);
+    white-space: nowrap;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .hero__eyebrow {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--champagne);
+    margin-bottom: 2.5rem;
+  }
+
+  .hero__title {
+    font-family: var(--serif);
+    font-size: clamp(2.8rem, 6vw, 5.2rem);
+    font-weight: 400;
+    line-height: 1.08;
+    color: var(--alabastro);
+    letter-spacing: -0.01em;
+    margin-bottom: 0.5rem;
+  }
+
+  .hero__title em {
+    font-style: italic;
+    color: var(--champagne);
+  }
+
+  .hero__subtitle {
+    font-family: var(--serif);
+    font-size: clamp(1.1rem, 2.2vw, 1.5rem);
+    font-weight: 400;
+    color: var(--nevoa);
+    margin-top: 1.5rem;
+    margin-bottom: 3.5rem;
+    max-width: 600px;
+    line-height: 1.5;
+  }
+
+  .hero__cta-group { display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; }
+
+  .btn--primary {
+    display: inline-block;
+    background: var(--champagne);
+    color: var(--obsidiana);
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 1.1rem 2.4rem;
+    text-decoration: none;
+    transition: background 0.2s ease, transform 0.2s ease;
+    cursor: pointer;
+    border: none;
+  }
+  .btn--primary:hover { background: var(--champagne-light); transform: translateY(-1px); }
+
+  .btn--ghost {
+    display: inline-block;
+    background: transparent;
+    color: var(--nevoa);
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 1.1rem 2.4rem;
+    text-decoration: none;
+    border: 1px solid rgba(201,195,184,0.3);
+    transition: border-color 0.2s ease, color 0.2s ease;
+    cursor: pointer;
+  }
+  .btn--ghost:hover { border-color: var(--champagne); color: var(--champagne); }
+
+  .hero__price-note {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: rgba(201,195,184,0.5);
+    letter-spacing: 0.1em;
+    margin-top: 1.2rem;
+  }
+
+  /* ════════════════════════════════════════
+     SEÇÃO 2 — IDENTIFICAÇÃO
+  ════════════════════════════════════════ */
+  #identificacao {
+    background: var(--creme);
+    padding: 7rem 0;
+  }
+
+  .identificacao__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+  }
+
+  .identificacao__title {
+    font-family: var(--serif);
+    font-size: clamp(2rem, 3.5vw, 3rem);
+    font-weight: 400;
+    line-height: 1.2;
+    margin-bottom: 2rem;
+  }
+
+  .identificacao__title em { font-style: italic; color: var(--champagne); }
+
+  .identificacao__list { list-style: none; }
+  .identificacao__list li {
+    padding: 1.1rem 0;
+    border-bottom: 1px solid var(--nevoa);
+    font-size: 1rem;
+    color: var(--grafite);
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+  .identificacao__list li:first-child { border-top: 1px solid var(--nevoa); }
+  .identificacao__list li::before {
+    content: '—';
+    color: var(--champagne);
+    flex-shrink: 0;
+    font-family: var(--mono);
+  }
+
+  .identificacao__quote {
+    background: var(--obsidiana);
+    padding: 3rem;
+    position: relative;
+  }
+  .identificacao__quote::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 2px;
+    height: 100%;
+    background: var(--champagne);
+  }
+  .identificacao__quote blockquote {
+    font-family: var(--serif);
+    font-size: 1.25rem;
+    font-style: italic;
+    color: var(--alabastro);
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+  }
+  .identificacao__quote cite {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--champagne);
+    font-style: normal;
+  }
+
+  /* ════════════════════════════════════════
+     SEÇÃO 3 — O VILÃO
+  ════════════════════════════════════════ */
+  #vilao {
+    background: var(--obsidiana);
+    padding: 7rem 0;
+  }
+
+  .vilao__title {
+    font-family: var(--serif);
+    font-size: clamp(2rem, 3.5vw, 3rem);
+    font-weight: 400;
+    color: var(--alabastro);
+    line-height: 1.2;
+    margin-bottom: 1rem;
+  }
+  .vilao__title em { font-style: italic; color: var(--champagne); }
+
+  .vilao__intro {
+    color: var(--nevoa);
+    max-width: 620px;
+    margin-bottom: 4rem;
+    font-size: 1.05rem;
+  }
+
+  .vilao__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--grafite);
+    border: 1px solid var(--grafite);
+  }
+
+  .vilao__card {
+    background: var(--obsidiana);
+    padding: 2.5rem 2rem;
+  }
+
+  .vilao__card-num {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.18em;
+    color: var(--champagne);
+    margin-bottom: 1.5rem;
+  }
+
+  .vilao__card h3 {
+    font-family: var(--serif);
+    font-size: 1.15rem;
+    font-weight: 400;
+    color: var(--alabastro);
+    margin-bottom: 1rem;
+    line-height: 1.3;
+  }
+
+  .vilao__card p {
+    font-size: 0.9rem;
+    color: var(--nevoa);
+    line-height: 1.7;
+  }
+
+  /* ════════════════════════════════════════
+     SEÇÃO 4 — O GUIA
+  ════════════════════════════════════════ */
+  #guia {
+    background: var(--alabastro);
+    padding: 7rem 0;
+  }
+
+  .guia__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6rem;
+    align-items: start;
+  }
+
+  .guia__label {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--champagne);
+    margin-bottom: 2rem;
+  }
+
+  .guia__title {
+    font-family: var(--serif);
+    font-size: clamp(2rem, 3vw, 2.6rem);
+    font-weight: 400;
+    line-height: 1.2;
+    margin-bottom: 2rem;
+  }
+
+  .guia__body {
+    color: var(--grafite);
+    font-size: 1rem;
+    line-height: 1.8;
+    margin-bottom: 1.5rem;
+  }
+
+  .guia__stat {
+    display: inline-block;
+    border-top: 1px solid var(--nevoa);
+    border-bottom: 1px solid var(--nevoa);
+    padding: 1.5rem 0;
+    margin: 2rem 0;
+    width: 100%;
+  }
+  .guia__stat-num {
+    font-family: var(--serif);
+    font-size: 3.5rem;
+    font-weight: 400;
+    color: var(--obsidiana);
+    line-height: 1;
+    margin-bottom: 0.3rem;
+  }
+  .guia__stat-label {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--champagne);
+  }
+
+  .guia__photo {
+    background: var(--obsidiana);
+    aspect-ratio: 3/4;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .guia__photo-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+  }
+
+  .guia__photo-icon {
+    width: 64px;
+    height: 64px;
+    border: 1px solid rgba(168,135,82,0.4);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .guia__photo-icon svg { opacity: 0.5; }
+
+  .guia__photo-text {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    color: rgba(201,195,184,0.4);
+    text-transform: uppercase;
+    text-align: center;
+  }
+
+  .guia__photo-caption {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 2rem;
+    background: linear-gradient(to top, rgba(13,13,13,0.95) 0%, transparent 100%);
+  }
+
+  .guia__photo-name {
+    font-family: var(--serif);
+    font-size: 1.1rem;
+    font-weight: 400;
+    color: var(--alabastro);
+    margin-bottom: 0.2rem;
+  }
+
+  .guia__photo-role {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--champagne);
+  }
+
+  /* ════════════════════════════════════════
+     SEÇÃO 5 — BIG IDEA
+  ════════════════════════════════════════ */
+  #bigidea {
+    background: var(--creme);
+    padding: 7rem 0;
+  }
+
+  .bigidea__title {
+    font-family: var(--serif);
+    font-size: clamp(2rem, 3.5vw, 3rem);
+    font-weight: 400;
+    line-height: 1.2;
+    margin-bottom: 3rem;
+    max-width: 640px;
+  }
+  .bigidea__title em { font-style: italic; color: var(--champagne); }
+
+  .bigidea__definition {
+    background: var(--obsidiana);
+    padding: 3rem 3.5rem;
+    margin: 3rem 0;
+    position: relative;
+    max-width: 720px;
+  }
+  .bigidea__definition::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 2px; height: 100%;
+    background: var(--champagne);
+  }
+  .bigidea__definition-word {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--champagne);
+    margin-bottom: 1rem;
+  }
+  .bigidea__definition-text {
+    font-family: var(--serif);
+    font-size: 1.1rem;
+    font-style: italic;
+    color: var(--alabastro);
+    line-height: 1.7;
+  }
+
+  .bigidea__comparison {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-top: 3rem;
+  }
+
+  .bigidea__item {
+    padding: 2rem;
+    border: 1px solid var(--nevoa);
+    background: var(--alabastro);
+  }
+
+  .bigidea__item--active {
+    background: var(--champagne);
+    border-color: var(--champagne);
+  }
+
+  .bigidea__item-label {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+    color: var(--nevoa);
+  }
+  .bigidea__item--active .bigidea__item-label { color: var(--obsidiana); opacity: 0.7; }
+
+  .bigidea__item-title {
+    font-family: var(--serif);
+    font-size: 1.2rem;
+    font-weight: 400;
+    color: var(--obsidiana);
+    margin-bottom: 0.5rem;
+  }
+
+  .bigidea__item-desc {
+    font-size: 0.85rem;
+    color: var(--grafite);
+    line-height: 1.6;
+  }
+  .bigidea__item--active .bigidea__item-desc { color: var(--obsidiana); }
+
+  /* ════════════════════════════════════════
+     SEÇÃO 6 — 7 PILARES
+  ════════════════════════════════════════ */
+  #pilares {
+    background: var(--obsidiana);
+    padding: 7rem 0;
+  }
+
+  .pilares__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 4rem;
+    flex-wrap: wrap;
+    gap: 2rem;
+  }
+
+  .pilares__title {
+    font-family: var(--serif);
+    font-size: clamp(2rem, 3.5vw, 3rem);
+    font-weight: 400;
+    color: var(--alabastro);
+    line-height: 1.2;
+  }
+
+  .pilares__subtitle {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--nevoa);
+    max-width: 280px;
+    text-align: right;
+    line-height: 1.8;
+  }
+
+  .pilares__list { list-style: none; }
+
+  .pilares__item {
+    display: grid;
+    grid-template-columns: 80px 1fr auto;
+    gap: 2rem;
+    align-items: start;
+    padding: 2.2rem 0;
+    border-bottom: 1px solid rgba(201,195,184,0.15);
+    transition: background 0.2s ease;
+    cursor: default;
+  }
+
+  .pilares__item:first-child { border-top: 1px solid rgba(201,195,184,0.15); }
+
+  .pilares__item:hover { background: rgba(168,135,82,0.04); }
+
+  .pilares__num {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--champagne);
+    padding-top: 0.35rem;
+  }
+
+  .pilares__name {
+    font-family: var(--serif);
+    font-size: 1.3rem;
+    font-weight: 400;
+    color: var(--alabastro);
+    margin-bottom: 0.4rem;
+  }
+
+  .pilares__desc {
+    font-size: 0.9rem;
+    color: var(--nevoa);
+    line-height: 1.6;
+  }
+
+  .pilares__tag {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--champagne);
+    border: 1px solid rgba(168,135,82,0.3);
+    padding: 0.3rem 0.6rem;
+    white-space: nowrap;
+    align-self: center;
+  }
+
+  /* ════════════════════════════════════════
+     SEÇÃO 7 — BÔNUS + STACK
+  ════════════════════════════════════════ */
+  #bonus {
+    background: var(--alabastro);
+    padding: 7rem 0;
+  }
+
+  .bonus__title {
+    font-family: var(--serif);
+    font-size: clamp(2rem, 3vw, 2.6rem);
+    font-weight: 400;
+    line-height: 1.2;
+    margin-bottom: 3rem;
+  }
+
+  .bonus__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+  }
+
+  .bonus__card {
+    padding: 2.5rem;
+    border: 1px solid var(--nevoa);
+    position: relative;
+    transition: border-color 0.2s ease;
+  }
+  .bonus__card:hover { border-color: var(--champagne); }
+
+  .bonus__card-eyebrow {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--champagne);
+    margin-bottom: 1rem;
+  }
+
+  .bonus__card h3 {
+    font-family: var(--serif);
+    font-size: 1.2rem;
+    font-weight: 400;
+    margin-bottom: 0.75rem;
+  }
+
+  .bonus__card p {
+    font-size: 0.9rem;
+    color: var(--grafite);
+    line-height: 1.7;
+  }
+
+  .bonus__total {
+    background: var(--creme);
+    padding: 2.5rem 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    border-top: 1px solid var(--nevoa);
+  }
+
+  .bonus__total-label {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--grafite);
+    margin-bottom: 0.5rem;
+  }
+
+  .bonus__total-value {
+    font-family: var(--serif);
+    font-size: 2rem;
+    font-weight: 400;
+    color: var(--champagne);
+  }
+
+  /* ════════════════════════════════════════
+     SEÇÃO 8 — OFERTA + GARANTIA
+  ════════════════════════════════════════ */
+  #oferta {
+    background: var(--obsidiana);
+    padding: 7rem 0;
+  }
+
+  .oferta__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5rem;
+    align-items: center;
+  }
+
+  .oferta__label {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--champagne);
+    margin-bottom: 2rem;
+  }
+
+  .oferta__title {
+    font-family: var(--serif);
+    font-size: clamp(1.8rem, 2.8vw, 2.4rem);
+    font-weight: 400;
+    color: var(--alabastro);
+    line-height: 1.25;
+    margin-bottom: 2rem;
+  }
+
+  .oferta__list {
+    list-style: none;
+    margin-bottom: 3rem;
+  }
+
+  .oferta__list li {
+    padding: 0.8rem 0;
+    border-bottom: 1px solid rgba(201,195,184,0.12);
+    color: var(--nevoa);
+    font-size: 0.95rem;
+    display: flex;
+    gap: 1rem;
+  }
+
+  .oferta__list li::before {
+    content: '—';
+    color: var(--champagne);
+    font-family: var(--mono);
+    flex-shrink: 0;
+  }
+
+  .oferta__card {
+    background: var(--grafite);
+    padding: 3.5rem;
+    text-align: center;
+    position: relative;
+    border: 1px solid rgba(201,195,184,0.1);
+  }
+
+  .oferta__card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--champagne);
+  }
+
+  .oferta__card-edition {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--champagne);
+    margin-bottom: 2rem;
+  }
+
+  .oferta__card-price {
+    font-family: var(--serif);
+    font-size: 4rem;
+    font-weight: 400;
+    color: var(--alabastro);
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+
+  .oferta__card-period {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    color: var(--nevoa);
+    margin-bottom: 2.5rem;
+  }
+
+  .oferta__card .btn--primary { width: 100%; text-align: center; display: block; margin-bottom: 1.5rem; }
+
+  .oferta__guarantee {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    justify-content: center;
+    margin-top: 1.5rem;
+  }
+
+  .oferta__guarantee-icon {
+    width: 36px;
+    height: 36px;
+    border: 1px solid rgba(168,135,82,0.4);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .oferta__guarantee-text {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--nevoa);
+    text-align: left;
+    line-height: 1.5;
+  }
+
+  /* ════════════════════════════════════════
+     SEÇÃO 9 — PARA QUEM É / NÃO É
+  ════════════════════════════════════════ */
+  #paraquem {
+    background: var(--creme);
+    padding: 7rem 0;
+  }
+
+  .paraquem__title {
+    font-family: var(--serif);
+    font-size: clamp(2rem, 3vw, 2.6rem);
+    font-weight: 400;
+    line-height: 1.2;
+    margin-bottom: 3.5rem;
+  }
+
+  .paraquem__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+
+  .paraquem__col {
+    padding: 2.5rem;
+  }
+
+  .paraquem__col--yes {
+    background: var(--obsidiana);
+  }
+
+  .paraquem__col--no {
+    background: var(--alabastro);
+    border: 1px solid var(--nevoa);
+  }
+
+  .paraquem__col-label {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid;
+  }
+
+  .paraquem__col--yes .paraquem__col-label { color: var(--champagne); border-color: rgba(168,135,82,0.3); }
+  .paraquem__col--no .paraquem__col-label { color: var(--grafite); border-color: var(--nevoa); }
+
+  .paraquem__list { list-style: none; }
+
+  .paraquem__list li {
+    padding: 0.9rem 0;
+    border-bottom: 1px solid;
+    font-size: 0.95rem;
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+
+  .paraquem__col--yes .paraquem__list li { border-color: rgba(201,195,184,0.12); color: var(--nevoa); }
+  .paraquem__col--no .paraquem__list li { border-color: var(--nevoa); color: var(--grafite); }
+
+  .paraquem__list li:last-child { border-bottom: none; }
+
+  .paraquem__list li::before {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    flex-shrink: 0;
+  }
+
+  .paraquem__col--yes .paraquem__list li::before { content: '✓'; color: var(--champagne); }
+  .paraquem__col--no .paraquem__list li::before { content: '×'; color: var(--nevoa); }
+
+  /* ════════════════════════════════════════
+     SEÇÃO 10 — FAQ
+  ════════════════════════════════════════ */
+  #faq {
+    background: var(--alabastro);
+    padding: 7rem 0;
+  }
+
+  .faq__title {
+    font-family: var(--serif);
+    font-size: clamp(2rem, 3vw, 2.6rem);
+    font-weight: 400;
+    margin-bottom: 3.5rem;
+  }
+
+  .faq__item {
+    border-bottom: 1px solid var(--nevoa);
+    overflow: hidden;
+  }
+
+  .faq__item:first-of-type { border-top: 1px solid var(--nevoa); }
+
+  .faq__question {
+    width: 100%;
+    background: none;
+    border: none;
+    text-align: left;
+    padding: 1.6rem 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    gap: 1.5rem;
+  }
+
+  .faq__question-text {
+    font-family: var(--serif);
+    font-size: 1.05rem;
+    font-weight: 400;
+    color: var(--obsidiana);
+    line-height: 1.4;
+  }
+
+  .faq__icon {
+    font-family: var(--mono);
+    font-size: 1.2rem;
+    color: var(--champagne);
+    flex-shrink: 0;
+    transition: transform 0.3s ease;
+    line-height: 1;
+  }
+
+  .faq__item.open .faq__icon { transform: rotate(45deg); }
+
+  .faq__answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+  }
+
+  .faq__answer-inner {
+    padding: 0 0 1.8rem 0;
+    color: var(--grafite);
+    font-size: 0.95rem;
+    line-height: 1.8;
+    max-width: 680px;
+  }
+
+  /* ════════════════════════════════════════
+     SEÇÃO 11 — CTA FINAL
+  ════════════════════════════════════════ */
+  #cta-final {
+    background: var(--obsidiana);
+    padding: 8rem 0 6rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  #cta-final::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 100%;
+    background: var(--champagne);
+  }
+
+  .cta-final__title {
+    font-family: var(--serif);
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    font-weight: 400;
+    color: var(--alabastro);
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+    max-width: 700px;
+  }
+
+  .cta-final__title em { font-style: italic; color: var(--champagne); }
+
+  .cta-final__sub {
+    color: var(--nevoa);
+    font-size: 1.05rem;
+    max-width: 520px;
+    margin-bottom: 3.5rem;
+    line-height: 1.7;
+  }
+
+  .cta-final__ps {
+    margin-top: 4rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(201,195,184,0.15);
+    font-family: var(--serif);
+    font-size: 0.95rem;
+    font-style: italic;
+    color: var(--nevoa);
+    max-width: 560px;
+  }
+
+  .cta-final__ps strong {
+    color: var(--champagne);
+    font-style: normal;
+    font-weight: 400;
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+  }
+
+  /* ════════════════════════════════════════
+     FOOTER
+  ════════════════════════════════════════ */
+  footer {
+    background: var(--obsidiana);
+    border-top: 1px solid rgba(201,195,184,0.1);
+    padding: 2.5rem 0;
+  }
+
+  .footer__inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .footer__brand {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--nevoa);
+  }
+
+  .footer__links {
+    display: flex;
+    gap: 2rem;
+  }
+
+  .footer__links a {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(201,195,184,0.4);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .footer__links a:hover { color: var(--champagne); }
+
+  /* ════════════════════════════════════════
+     RESPONSIVO
+  ════════════════════════════════════════ */
+  @media (max-width: 768px) {
+    .identificacao__grid,
+    .guia__grid,
+    .oferta__grid,
+    .paraquem__grid,
+    .bigidea__comparison,
+    .vilao__grid,
+    .bonus__grid { grid-template-columns: 1fr; gap: 2rem; }
+
+    .pilares__item { grid-template-columns: 50px 1fr; }
+    .pilares__tag { display: none; }
+
+    .pilares__header { flex-direction: column; align-items: flex-start; }
+    .pilares__subtitle { text-align: left; }
+
+    .oferta__card-price { font-size: 3rem; }
+    .hero::after { display: none; }
+
+    .bonus__total { flex-direction: column; align-items: flex-start; }
+    .footer__inner { flex-direction: column; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ════════ SEÇÃO 1 — HERO ════════ -->
+<section id="hero">
+  <div class="container fade-up">
+    <p class="hero__eyebrow">Protocolo Alta Conversão · Edição 2025 · by Felippe Nóbrega</p>
+    <h1 class="hero__title">
+      Pare de parecer<br>
+      <em>mais um.</em>
+    </h1>
+    <p class="hero__subtitle">
+      Em 90 dias, o mercado começa a te procurar.<br>Não o contrário.
+    </p>
+    <div class="hero__cta-group">
+      <a href="#oferta" class="btn--primary">Adquirir o Protocolo — R$ 99,97</a>
+      <a href="#pilares" class="btn--ghost">Ver os 7 pilares</a>
+    </div>
+    <p class="hero__price-note">Acesso permanente · Garantia de 7 dias · Aplicável em 90 dias</p>
+  </div>
+</section>
+
+<!-- ════════ SEÇÃO 2 — IDENTIFICAÇÃO ════════ -->
+<section id="identificacao">
+  <div class="container">
+    <div class="identificacao__grid">
+      <div class="fade-up">
+        <span class="tag">Você se reconhece aqui?</span>
+        <h2 class="identificacao__title">
+          Você trabalha muito.<br>
+          Fatura pouco.<br>
+          E não entende <em>por quê.</em>
+        </h2>
+        <ul class="identificacao__list">
+          <li>Tem 3–10 anos de mercado e ainda concorre por preço</li>
+          <li>Quando aparece um cliente premium, ele escolhe outro corretor</li>
+          <li>Já tentou curso, coach, Instagram, tráfego pago — nada resolveu</li>
+          <li>Sente que falta alguma coisa que ninguém te diz</li>
+          <li>Colegas menos competentes estão subindo — e você sabe disso</li>
+        </ul>
+      </div>
+      <div class="fade-up">
+        <div class="identificacao__quote">
+          <blockquote>
+            "Trabalho muito, faturo pouco. Falta alguma coisa que ninguém me diz."
+          </blockquote>
+          <cite>— Diego, 34 anos · Corretor há 6 anos · Persona central do Protocolo</cite>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════ SEÇÃO 3 — O VILÃO ════════ -->
+<section id="vilao">
+  <div class="container">
+    <div class="fade-up">
+      <span class="tag" style="color: var(--nevoa); border-color: rgba(201,195,184,0.3);">O problema real</span>
+      <h2 class="vilao__title">
+        O problema não é<br>
+        <em>falta de esforço.</em>
+      </h2>
+      <p class="vilao__intro">
+        É um sistema inteiro que recompensa aparência de volume — não posicionamento estratégico. A mediocridade do mercado tradicional não é culpa sua. É um modelo.
+      </p>
+    </div>
+    <div class="vilao__grid fade-up">
+      <div class="vilao__card">
+        <p class="vilao__card-num">01 · EXTERNO</p>
+        <h3>Você não fecha vendas de alto padrão</h3>
+        <p>Quando aparece o cliente premium, ele já tem outro corretor em mente. Você é o terceiro da lista — nunca o primeiro.</p>
+      </div>
+      <div class="vilao__card">
+        <p class="vilao__card-num">02 · INTERNO</p>
+        <h3>Você se sente "mais um"</h3>
+        <p>O medo de ser mediano mesmo. De que todo esforço não leve a lugar nenhum. De chegar aos 45 ainda dependendo de plantão.</p>
+      </div>
+      <div class="vilao__card">
+        <p class="vilao__card-num">03 · FILOSÓFICO</p>
+        <h3>Não deveria ser assim</h3>
+        <p>Corretor competente não deveria implorar por cliente. O mercado recompensa quem se posiciona — não quem trabalha mais.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════ SEÇÃO 4 — O GUIA ════════ -->
+<section id="guia">
+  <div class="container">
+    <div class="guia__grid">
+      <div class="fade-up">
+        <p class="guia__label">O Guia</p>
+        <h2 class="guia__title">Felippe Nóbrega</h2>
+        <p class="guia__body">
+          Comecei como todo mundo começa: sem saber por onde começar. Passei anos respondendo 200 mensagens por dia, ganhando o que o mercado deixava. Sei exatamente o que é estar no teto do próprio método.
+        </p>
+        <p class="guia__body">
+          A diferença é que saí de lá — não por sorte, mas por protocolo. Em 2025, fechei R$ 100 milhões em VGV com tecnologia como alavanca, no mercado de alto padrão de João Pessoa.
+        </p>
+        <p class="guia__body" style="color: var(--obsidiana); font-weight: 500;">
+          Não vendi um ebook antes de viver a operação. O Protocolo é o que eu aplico no dia — não o que inventei para ensinar.
+        </p>
+        <div class="guia__stat">
+          <div class="guia__stat-num">R$ 100M</div>
+          <div class="guia__stat-label">Em VGV · 2025 · Alto padrão · João Pessoa</div>
+        </div>
+      </div>
+      <div class="fade-up">
+        <div class="guia__photo">
+          <div class="guia__photo-placeholder">
+            <div class="guia__photo-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#A88752" stroke-width="1">
+                <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+              </svg>
+            </div>
+            <p class="guia__photo-text">Foto do autor<br>Luz natural · Alfaiataria<br>Alto padrão JP</p>
+          </div>
+          <div class="guia__photo-caption">
+            <p class="guia__photo-name">Felippe Nóbrega</p>
+            <p class="guia__photo-role">Corretor · Estrategista Imobiliário · João Pessoa</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════ SEÇÃO 5 — BIG IDEA ════════ -->
+<section id="bigidea">
+  <div class="container">
+    <div class="fade-up">
+      <span class="tag">A diferença</span>
+      <h2 class="bigidea__title">
+        Não é curso.<br>
+        Não é método.<br>
+        <em>É protocolo.</em>
+      </h2>
+
+      <div class="bigidea__definition">
+        <p class="bigidea__definition-word">Protocolo · substantivo masculino</p>
+        <p class="bigidea__definition-text">
+          Conjunto de passos ordenados, replicáveis e mensuráveis, aplicado com disciplina e ajustado ao contexto do praticante. Na cirurgia, salva vidas. Na aviação, previne acidentes. Na sua carreira, elimina a dependência da sorte.
+        </p>
+      </div>
+
+      <div class="bigidea__comparison">
+        <div class="bigidea__item">
+          <p class="bigidea__item-label">Curso comum</p>
+          <h3 class="bigidea__item-title">Motivação + teoria</h3>
+          <p class="bigidea__item-desc">Você sai animado. Volta para a rotina. Nada muda. O problema é percepção — não mais conteúdo.</p>
+        </div>
+        <div class="bigidea__item">
+          <p class="bigidea__item-label">Método genérico</p>
+          <h3 class="bigidea__item-title">Funciona para outros</h3>
+          <p class="bigidea__item-desc">Criado para o contexto de São Paulo. Difícil de replicar no seu mercado, com o seu perfil de cliente.</p>
+        </div>
+        <div class="bigidea__item bigidea__item--active">
+          <p class="bigidea__item-label">Protocolo Alta Conversão</p>
+          <h3 class="bigidea__item-title">Aplicável em 90 dias</h3>
+          <p class="bigidea__item-desc">Baseado em operação real de R$ 100M em VGV. Replicável em qualquer cidade. Mensurável desde o D+7.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════ SEÇÃO 6 — 7 PILARES ════════ -->
+<section id="pilares">
+  <div class="container">
+    <div class="pilares__header fade-up">
+      <h2 class="pilares__title">Os 7 Pilares<br>do Protocolo</h2>
+      <p class="pilares__subtitle">37 páginas · Aplicável em 90 dias · Baseado em operação real</p>
+    </div>
+    <ul class="pilares__list fade-up">
+      <li class="pilares__item">
+        <span class="pilares__num">01</span>
+        <div>
+          <h3 class="pilares__name">Mentalidade</h3>
+          <p class="pilares__desc">A diferença entre o corretor comum e o estrategista — não é esforço, é perspectiva.</p>
+        </div>
+        <span class="pilares__tag">Fundação</span>
+      </li>
+      <li class="pilares__item">
+        <span class="pilares__num">02</span>
+        <div>
+          <h3 class="pilares__name">Posicionamento</h3>
+          <p class="pilares__desc">Como o mercado te enxerga — e como mudar isso em 30 dias sem mudar de cidade.</p>
+        </div>
+        <span class="pilares__tag">Estratégia</span>
+      </li>
+      <li class="pilares__item">
+        <span class="pilares__num">03</span>
+        <div>
+          <h3 class="pilares__name">Proposta de Valor</h3>
+          <p class="pilares__desc">Por que o cliente premium compra com você — e não com o concorrente que cobre menos.</p>
+        </div>
+        <span class="pilares__tag">Diferencial</span>
+      </li>
+      <li class="pilares__item">
+        <span class="pilares__num">04</span>
+        <div>
+          <h3 class="pilares__name">Público-Alvo</h3>
+          <p class="pilares__desc">Escolher bem o cliente é mais importante que atender qualquer um. Filtro antes do funil.</p>
+        </div>
+        <span class="pilares__tag">Qualificação</span>
+      </li>
+      <li class="pilares__item">
+        <span class="pilares__num">05</span>
+        <div>
+          <h3 class="pilares__name">Diferencial</h3>
+          <p class="pilares__desc">Como construir marca pessoal reconhecida — sem depender de viral ou de volume de postagem.</p>
+        </div>
+        <span class="pilares__tag">Marca</span>
+      </li>
+      <li class="pilares__item">
+        <span class="pilares__num">06</span>
+        <div>
+          <h3 class="pilares__name">Redes Sociais</h3>
+          <p class="pilares__desc">Instagram como ferramenta de autoridade — não de vitrine. A diferença que o mercado percebe.</p>
+        </div>
+        <span class="pilares__tag">Circulação</span>
+      </li>
+      <li class="pilares__item">
+        <span class="pilares__num">07</span>
+        <div>
+          <h3 class="pilares__name">Execução</h3>
+          <p class="pilares__desc">Rotina, plano de 30 dias e checklist diário. Protocolo não é teoria — é disciplina aplicada.</p>
+        </div>
+        <span class="pilares__tag">Operação</span>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- ════════ SEÇÃO 7 — BÔNUS + STACK ════════ -->
+<section id="bonus">
+  <div class="container">
+    <div class="fade-up">
+      <span class="tag">O que você recebe</span>
+      <h2 class="bonus__title">Além dos 7 pilares,<br>você adquire:</h2>
+    </div>
+    <div class="bonus__grid fade-up">
+      <div class="bonus__card">
+        <p class="bonus__card-eyebrow">Bônus 01</p>
+        <h3>Bloco 1 — Mentalidade do Estrategista</h3>
+        <p>O primeiro pilar completo em formato de leitura rápida. Aplicável na semana 1. Disponível gratuitamente para captura de email.</p>
+      </div>
+      <div class="bonus__card">
+        <p class="bonus__card-eyebrow">Bônus 02</p>
+        <h3>Checklist dos 90 Dias</h3>
+        <p>O plano de execução semana a semana. Sem adivinhação — você sabe exatamente o que fazer no D+1, D+30 e D+90.</p>
+      </div>
+      <div class="bonus__card">
+        <p class="bonus__card-eyebrow">Bônus 03</p>
+        <h3>Roteiro de Posicionamento Digital</h3>
+        <p>Como estruturar seu Instagram como ferramenta de autoridade — não de exposição. Grid, bio, frequência e tom de voz.</p>
+      </div>
+      <div class="bonus__card">
+        <p class="bonus__card-eyebrow">Bônus 04</p>
+        <h3>Acesso permanente + atualizações</h3>
+        <p>Cada nova edição do Protocolo chega para você sem custo adicional. O mercado muda — o protocolo acompanha.</p>
+      </div>
+    </div>
+    <div class="bonus__total fade-up">
+      <div>
+        <p class="bonus__total-label">Valor do conjunto</p>
+        <p class="bonus__total-value">R$ 99,97</p>
+      </div>
+      <div>
+        <p style="font-size: 0.9rem; color: var(--grafite); max-width: 380px; line-height: 1.6;">
+          Sem desconto artificial de "de R$ 497 por R$ 99,97". Este é o preço da edição 2025 — sem urgência fabricada.
+        </p>
+      </div>
+      <a href="#oferta" class="btn--primary">Adquirir agora</a>
+    </div>
+  </div>
+</section>
+
+<!-- ════════ SEÇÃO 8 — OFERTA + GARANTIA ════════ -->
+<section id="oferta">
+  <div class="container">
+    <div class="oferta__grid">
+      <div class="fade-up">
+        <p class="oferta__label">A oferta</p>
+        <h2 class="oferta__title">Protocolo Alta Conversão<br>Edição 2025</h2>
+        <ul class="oferta__list">
+          <li>37 páginas estruturadas em 7 pilares aplicáveis</li>
+          <li>Checklist dos 90 dias com plano semana a semana</li>
+          <li>Roteiro de posicionamento digital</li>
+          <li>Bloco 1 — Mentalidade do Estrategista</li>
+          <li>Acesso permanente + todas as atualizações futuras</li>
+          <li>Baseado em R$ 100 milhões em VGV operado em 2025</li>
+        </ul>
+      </div>
+      <div class="fade-up">
+        <div class="oferta__card">
+          <p class="oferta__card-edition">Protocolo Alta Conversão · Edição 2025</p>
+          <p class="oferta__card-price">R$ 99,97</p>
+          <p class="oferta__card-period">Acesso permanente · Pagamento único</p>
+          <a href="#" class="btn--primary">Adquirir o Protocolo</a>
+          <div class="oferta__guarantee">
+            <div class="oferta__guarantee-icon">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#A88752" stroke-width="1.5">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+            </div>
+            <p class="oferta__guarantee-text">Garantia de 7 dias<br>Reembolso integral · Sem perguntas</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════ SEÇÃO 9 — PARA QUEM É / NÃO É ════════ -->
+<section id="paraquem">
+  <div class="container">
+    <div class="fade-up">
+      <span class="tag">Filtro de cliente</span>
+      <h2 class="paraquem__title">Este protocolo<br>não é para todos.</h2>
+    </div>
+    <div class="paraquem__grid fade-up">
+      <div class="paraquem__col paraquem__col--yes">
+        <p class="paraquem__col-label">É para você se:</p>
+        <ul class="paraquem__list">
+          <li>Tem CRECI ativo e pelo menos 1 venda feita</li>
+          <li>Fatura entre R$ 5k–R$ 30k/mês e quer subir</li>
+          <li>Já tentou curso motivacional e não funcionou</li>
+          <li>Quer ser escolhido por posicionamento — não por preço</li>
+          <li>Está disposto a aplicar um protocolo por 90 dias</li>
+          <li>Entende que resultado vem de processo, não de inspiração</li>
+        </ul>
+      </div>
+      <div class="paraquem__col paraquem__col--no">
+        <p class="paraquem__col-label">Não é para você se:</p>
+        <ul class="paraquem__list">
+          <li>Está buscando script de fechamento ou técnica de objeção</li>
+          <li>Quer conteúdo motivacional ou mindset positivo</li>
+          <li>Espera resultado sem aplicação disciplinada de 90 dias</li>
+          <li>Nunca fez uma venda e está começando do zero</li>
+          <li>Quer fórmula fácil e resultado garantido sem trabalho</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════ SEÇÃO 10 — FAQ ════════ -->
+<section id="faq">
+  <div class="container--narrow">
+    <div class="fade-up">
+      <span class="tag">Perguntas frequentes</span>
+      <h2 class="faq__title">Antes de decidir</h2>
+    </div>
+    <div class="fade-up">
+      <div class="faq__item">
+        <button class="faq__question" onclick="toggleFaq(this)">
+          <span class="faq__question-text">Qual a diferença entre isso e um curso de corretor?</span>
+          <span class="faq__icon">+</span>
+        </button>
+        <div class="faq__answer">
+          <div class="faq__answer-inner">
+            Curso te dá conteúdo. Protocolo te dá passos ordenados e mensuráveis. A diferença prática: no curso você termina animado e volta para a mesma rotina. No Protocolo, você sai com um plano de 90 dias de execução — com checklist, marco de resultado e ajuste de rota. É aplicável, não inspiracional.
+          </div>
+        </div>
+      </div>
+      <div class="faq__item">
+        <button class="faq__question" onclick="toggleFaq(this)">
+          <span class="faq__question-text">Funciona para qualquer cidade do Brasil?</span>
+          <span class="faq__icon">+</span>
+        </button>
+        <div class="faq__answer">
+          <div class="faq__answer-inner">
+            Sim. O Protocolo foi desenvolvido em João Pessoa — longe dos grandes centros — e aplicado em operação de R$ 100 milhões em VGV. Os princípios de posicionamento não dependem de mercado superaquecido. Dependem de método. Qualquer cidade com mercado imobiliário ativo é território válido.
+          </div>
+        </div>
+      </div>
+      <div class="faq__item">
+        <button class="faq__question" onclick="toggleFaq(this)">
+          <span class="faq__question-text">Em quanto tempo vejo resultado?</span>
+          <span class="faq__icon">+</span>
+        </button>
+        <div class="faq__answer">
+          <div class="faq__answer-inner">
+            O Protocolo é estruturado em 90 dias. Os primeiros ajustes de posicionamento digital acontecem nas semanas 1–2. A percepção do mercado começa a mudar no mês 2. No mês 3, com consistência de execução, o ciclo de indicação e procura espontânea começa a se formar. Não é milagre — é processo.
+          </div>
+        </div>
+      </div>
+      <div class="faq__item">
+        <button class="faq__question" onclick="toggleFaq(this)">
+          <span class="faq__question-text">Como funciona a garantia de 7 dias?</span>
+          <span class="faq__icon">+</span>
+        </button>
+        <div class="faq__answer">
+          <div class="faq__answer-inner">
+            Se em 7 dias após a compra você entender que o Protocolo não é para você, devolvo 100% do valor sem perguntas. Basta enviar um email. O risco é meu — o comprometimento de aplicar é seu.
+          </div>
+        </div>
+      </div>
+      <div class="faq__item">
+        <button class="faq__question" onclick="toggleFaq(this)">
+          <span class="faq__question-text">Serve para corretor iniciante?</span>
+          <span class="faq__icon">+</span>
+        </button>
+        <div class="faq__answer">
+          <div class="faq__answer-inner">
+            Não. O Protocolo pressupõe que você já tem pelo menos uma venda feita e entende o básico da operação. Se você está na sua primeira semana de carreira, volte quando tiver 6–12 meses de mercado. O conteúdo fará muito mais sentido com contexto de operação real.
+          </div>
+        </div>
+      </div>
+      <div class="faq__item">
+        <button class="faq__question" onclick="toggleFaq(this)">
+          <span class="faq__question-text">O acesso expira?</span>
+          <span class="faq__icon">+</span>
+        </button>
+        <div class="faq__answer">
+          <div class="faq__answer-inner">
+            Acesso permanente. Cada nova edição do Protocolo é entregue para quem já adquiriu sem custo adicional. Você não compra uma versão — você entra na operação.
+          </div>
+        </div>
+      </div>
+      <div class="faq__item">
+        <button class="faq__question" onclick="toggleFaq(this)">
+          <span class="faq__question-text">Como recebo o Protocolo após a compra?</span>
+          <span class="faq__icon">+</span>
+        </button>
+        <div class="faq__answer">
+          <div class="faq__answer-inner">
+            Imediatamente após a confirmação do pagamento, você recebe o acesso por email. O Protocolo está disponível para leitura online e download em PDF. O Bloco 1 fica disponível antes mesmo da compra — é só cadastrar seu email.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════ SEÇÃO 11 — CTA FINAL ════════ -->
+<section id="cta-final">
+  <div class="container fade-up">
+    <h2 class="cta-final__title">
+      O mercado não<br>
+      recompensa esforço.<br>
+      <em>Recompensa posicionamento.</em>
+    </h2>
+    <p class="cta-final__sub">
+      Você já trabalha o suficiente. A pergunta é: por que ainda está no mesmo lugar? O Protocolo responde isso — e te dá os passos para sair.
+    </p>
+    <div class="hero__cta-group">
+      <a href="#oferta" class="btn--primary">Adquirir o Protocolo — R$ 99,97</a>
+    </div>
+    <p class="cta-final__ps">
+      <strong>P.S.</strong> — Se você chegou até aqui, já percebeu que o problema não é esforço. É percepção. O Protocolo custa R$ 99,97. Uma venda de alto padrão perdida por falta de posicionamento custa muito mais. A decisão é sua.
+    </p>
+  </div>
+</section>
+
+<!-- ════════ FOOTER ════════ -->
+<footer>
+  <div class="container">
+    <div class="footer__inner">
+      <p class="footer__brand">Protocolo Alta Conversão · by Felippe Nóbrega · Edição 2025</p>
+      <nav class="footer__links">
+        <a href="#">Política de Privacidade</a>
+        <a href="#">Termos de Uso</a>
+        <a href="#">Contato</a>
+      </nav>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ── Fade-up on scroll ──
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(el => {
+      if (el.isIntersecting) { el.target.classList.add('visible'); }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+  // ── FAQ accordion ──
+  function toggleFaq(btn) {
+    const item = btn.closest('.faq__item');
+    const answer = item.querySelector('.faq__answer');
+    const isOpen = item.classList.contains('open');
+
+    document.querySelectorAll('.faq__item.open').forEach(i => {
+      i.classList.remove('open');
+      i.querySelector('.faq__answer').style.maxHeight = null;
+    });
+
+    if (!isOpen) {
+      item.classList.add('open');
+      answer.style.maxHeight = answer.scrollHeight + 'px';
+    }
+  }
+</script>
+</body>
+</html>
