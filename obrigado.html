@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Protocolo recebido — Felippe Nóbrega</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --obsidiana: #0D0D0D;
+    --alabastro: #FAF7F2;
+    --champagne: #A88752;
+    --champagne-light: #C9A96E;
+    --grafite: #3A3A3A;
+    --nevoa: #C9C3B8;
+    --creme: #F0EBE0;
+    --serif: 'Playfair Display', Georgia, serif;
+    --sans: 'Inter', Helvetica, sans-serif;
+    --mono: 'IBM Plex Mono', monospace;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--obsidiana);
+    color: var(--alabastro);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .container { max-width: 1080px; margin: 0 auto; padding: 0 2rem; }
+  .container--narrow { max-width: 680px; margin: 0 auto; padding: 0 2rem; }
+
+  /* ── FADE IN ── */
+  .fade-up {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+  /* ════════════════════════════════════════
+     CONFIRMAÇÃO — HERO
+  ════════════════════════════════════════ */
+  #confirmacao {
+    background: var(--obsidiana);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    padding: 6rem 0 5rem;
+  }
+
+  #confirmacao::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 100%;
+    background: var(--champagne);
+  }
+
+  #confirmacao::after {
+    content: 'PROTOCOLO';
+    position: absolute;
+    right: -2rem; top: 50%;
+    transform: translateY(-50%) rotate(90deg);
+    font-family: var(--serif);
+    font-size: 7rem;
+    letter-spacing: 0.3em;
+    color: rgba(168,135,82,0.04);
+    white-space: nowrap;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .confirm__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    border: 1px solid rgba(168,135,82,0.4);
+    padding: 0.5rem 1.1rem 0.5rem 0.75rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .confirm__badge-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--champagne);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  .confirm__badge-text {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--champagne);
+  }
+
+  .confirm__eyebrow {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--champagne);
+    margin-bottom: 1.5rem;
+  }
+
+  .confirm__title {
+    font-family: var(--serif);
+    font-size: clamp(2.8rem, 5.5vw, 4.8rem);
+    font-weight: 400;
+    line-height: 1.08;
+    color: var(--alabastro);
+    letter-spacing: -0.01em;
+    margin-bottom: 1.5rem;
+  }
+
+  .confirm__title em {
+    font-style: italic;
+    color: var(--champagne);
+  }
+
+  .confirm__sub {
+    font-family: var(--serif);
+    font-size: clamp(1rem, 2vw, 1.3rem);
+    font-weight: 400;
+    color: var(--nevoa);
+    max-width: 560px;
+    line-height: 1.6;
+    margin-bottom: 3.5rem;
+  }
+
+  /* ── BOTÃO DOWNLOAD ── */
+  .btn--download {
+    display: inline-flex;
+    align-items: center;
+    gap: 1rem;
+    background: var(--champagne);
+    color: var(--obsidiana);
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 1.25rem 2.4rem;
+    text-decoration: none;
+    transition: background 0.2s ease, transform 0.2s ease;
+    cursor: pointer;
+    border: none;
+  }
+
+  .btn--download:hover {
+    background: var(--champagne-light);
+    transform: translateY(-2px);
+  }
+
+  .btn--download svg { flex-shrink: 0; }
+
+  .confirm__note {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    color: rgba(201,195,184,0.4);
+    letter-spacing: 0.1em;
+    margin-top: 1.2rem;
+  }
+
+  /* ── DIVISOR ── */
+  .section-rule {
+    width: 100%;
+    height: 1px;
+    background: rgba(201,195,184,0.1);
+  }
+
+  /* ════════════════════════════════════════
+     PROXIMOS PASSOS — CHECKLIST RÁPIDO
+  ════════════════════════════════════════ */
+  #proximos {
+    background: var(--grafite);
+    padding: 5rem 0;
+  }
+
+  .proximos__label {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--champagne);
+    margin-bottom: 2rem;
+  }
+
+  .proximos__title {
+    font-family: var(--serif);
+    font-size: clamp(1.6rem, 2.5vw, 2.2rem);
+    font-weight: 400;
+    color: var(--alabastro);
+    line-height: 1.25;
+    margin-bottom: 3rem;
+  }
+
+  .proximos__steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: rgba(201,195,184,0.08);
+    border: 1px solid rgba(201,195,184,0.08);
+  }
+
+  .proximos__step {
+    background: var(--grafite);
+    padding: 2rem 1.75rem;
+  }
+
+  .proximos__step-num {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    color: var(--champagne);
+    margin-bottom: 1.25rem;
+  }
+
+  .proximos__step h3 {
+    font-family: var(--serif);
+    font-size: 1.05rem;
+    font-weight: 400;
+    color: var(--alabastro);
+    margin-bottom: 0.5rem;
+    line-height: 1.3;
+  }
+
+  .proximos__step p {
+    font-size: 0.875rem;
+    color: var(--nevoa);
+    line-height: 1.65;
+  }
+
+  /* ════════════════════════════════════════
+     UPSELL — SESSÃO ESTRATÉGICA
+  ════════════════════════════════════════ */
+  #upsell {
+    background: var(--obsidiana);
+    padding: 8rem 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  #upsell::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 100%;
+    background: var(--champagne);
+  }
+
+  .upsell__eyebrow {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--champagne);
+    margin-bottom: 2rem;
+  }
+
+  .upsell__title {
+    font-family: var(--serif);
+    font-size: clamp(2.2rem, 4.5vw, 4rem);
+    font-weight: 400;
+    color: var(--alabastro);
+    line-height: 1.1;
+    margin-bottom: 0.5rem;
+  }
+
+  .upsell__title em {
+    font-style: italic;
+    color: var(--champagne);
+  }
+
+  .upsell__intro {
+    font-size: 1rem;
+    color: var(--nevoa);
+    max-width: 580px;
+    line-height: 1.75;
+    margin: 2rem 0 4rem;
+  }
+
+  .upsell__grid {
+    display: grid;
+    grid-template-columns: 1fr 420px;
+    gap: 5rem;
+    align-items: start;
+  }
+
+  /* ── O QUE VOCÊ RECEBE ── */
+  .upsell__includes {
+    list-style: none;
+    margin-bottom: 3rem;
+  }
+
+  .upsell__includes li {
+    padding: 1.1rem 0;
+    border-bottom: 1px solid rgba(201,195,184,0.1);
+    display: flex;
+    gap: 1.25rem;
+    align-items: flex-start;
+  }
+
+  .upsell__includes li:first-child { border-top: 1px solid rgba(201,195,184,0.1); }
+
+  .upsell__includes li::before {
+    content: '—';
+    color: var(--champagne);
+    font-family: var(--mono);
+    flex-shrink: 0;
+    padding-top: 0.1rem;
+  }
+
+  .upsell__includes-title {
+    font-size: 0.95rem;
+    color: var(--alabastro);
+    margin-bottom: 0.2rem;
+    line-height: 1.3;
+  }
+
+  .upsell__includes-desc {
+    font-size: 0.82rem;
+    color: var(--nevoa);
+    line-height: 1.55;
+  }
+
+  /* ── DEPOIMENTO ── */
+  .upsell__quote {
+    background: var(--grafite);
+    padding: 2.5rem;
+    position: relative;
+    margin-top: 3rem;
+    border: 1px solid rgba(201,195,184,0.08);
+  }
+
+  .upsell__quote::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 2px; height: 100%;
+    background: var(--champagne);
+  }
+
+  .upsell__quote blockquote {
+    font-family: var(--serif);
+    font-size: 1.05rem;
+    font-style: italic;
+    color: var(--alabastro);
+    line-height: 1.6;
+    margin-bottom: 1.25rem;
+  }
+
+  .upsell__quote cite {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--champagne);
+    font-style: normal;
+  }
+
+  /* ── CARD DE OFERTA ── */
+  .upsell__card {
+    background: var(--grafite);
+    border: 1px solid rgba(201,195,184,0.1);
+    position: relative;
+    padding: 3rem;
+  }
+
+  .upsell__card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--champagne);
+  }
+
+  .upsell__card-badge {
+    display: inline-block;
+    background: rgba(168,135,82,0.12);
+    border: 1px solid rgba(168,135,82,0.3);
+    font-family: var(--mono);
+    font-size: 0.55rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--champagne);
+    padding: 0.3rem 0.7rem;
+    margin-bottom: 1.75rem;
+  }
+
+  .upsell__card-name {
+    font-family: var(--serif);
+    font-size: 1.3rem;
+    font-weight: 400;
+    color: var(--alabastro);
+    line-height: 1.3;
+    margin-bottom: 0.5rem;
+  }
+
+  .upsell__card-subtitle {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--nevoa);
+    margin-bottom: 2.5rem;
+  }
+
+  .upsell__card-price-from {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(201,195,184,0.4);
+    text-decoration: line-through;
+    margin-bottom: 0.25rem;
+  }
+
+  .upsell__card-price {
+    font-family: var(--serif);
+    font-size: 3.2rem;
+    font-weight: 400;
+    color: var(--alabastro);
+    line-height: 1;
+    margin-bottom: 0.4rem;
+  }
+
+  .upsell__card-price-note {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    color: var(--nevoa);
+    margin-bottom: 2.5rem;
+  }
+
+  .upsell__card-spots {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+    padding: 1rem 1.25rem;
+    background: rgba(168,135,82,0.07);
+    border: 1px solid rgba(168,135,82,0.2);
+  }
+
+  .upsell__card-spots-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--champagne);
+    flex-shrink: 0;
+    animation: pulse 1.8s infinite;
+  }
+
+  .upsell__card-spots-text {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--champagne);
+    line-height: 1.5;
+  }
+
+  .btn--upsell {
+    display: block;
+    width: 100%;
+    text-align: center;
+    background: var(--champagne);
+    color: var(--obsidiana);
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 1.25rem 2rem;
+    text-decoration: none;
+    transition: background 0.2s ease, transform 0.2s ease;
+    cursor: pointer;
+    border: none;
+    margin-bottom: 1.25rem;
+  }
+
+  .btn--upsell:hover { background: var(--champagne-light); transform: translateY(-1px); }
+
+  .btn--skip {
+    display: block;
+    width: 100%;
+    text-align: center;
+    background: transparent;
+    color: rgba(201,195,184,0.35);
+    font-family: var(--mono);
+    font-size: 0.58rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.75rem;
+    text-decoration: none;
+    transition: color 0.2s ease;
+    cursor: pointer;
+    border: none;
+  }
+
+  .btn--skip:hover { color: var(--nevoa); }
+
+  .upsell__card-guarantee {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(201,195,184,0.1);
+  }
+
+  .upsell__card-guarantee-icon {
+    width: 32px; height: 32px;
+    border: 1px solid rgba(168,135,82,0.3);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .upsell__card-guarantee-text {
+    font-family: var(--mono);
+    font-size: 0.57rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(201,195,184,0.4);
+    line-height: 1.5;
+  }
+
+  /* ── SOBRE O FELIPPE ── */
+  .upsell__author {
+    margin-top: 3rem;
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+    padding: 2rem;
+    border: 1px solid rgba(201,195,184,0.08);
+  }
+
+  .upsell__author-photo {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    background: var(--grafite);
+    border: 1px solid rgba(168,135,82,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .upsell__author-name {
+    font-family: var(--serif);
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--alabastro);
+    margin-bottom: 0.2rem;
+  }
+
+  .upsell__author-role {
+    font-family: var(--mono);
+    font-size: 0.58rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--champagne);
+    margin-bottom: 0.75rem;
+  }
+
+  .upsell__author-bio {
+    font-size: 0.85rem;
+    color: var(--nevoa);
+    line-height: 1.6;
+  }
+
+  /* ════════════════════════════════════════
+     FOOTER
+  ════════════════════════════════════════ */
+  footer {
+    background: var(--obsidiana);
+    border-top: 1px solid rgba(201,195,184,0.08);
+    padding: 2.5rem 0;
+  }
+
+  .footer__inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .footer__brand {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--nevoa);
+  }
+
+  .footer__links {
+    display: flex;
+    gap: 2rem;
+  }
+
+  .footer__links a {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(201,195,184,0.35);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .footer__links a:hover { color: var(--champagne); }
+
+  /* ════════════════════════════════════════
+     RESPONSIVO
+  ════════════════════════════════════════ */
+  @media (max-width: 768px) {
+    .upsell__grid { grid-template-columns: 1fr; gap: 3rem; }
+    .proximos__steps { grid-template-columns: 1fr; }
+    .upsell__author { flex-direction: column; }
+    .footer__inner { flex-direction: column; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ════════ CONFIRMAÇÃO — HERO ════════ -->
+<section id="confirmacao">
+  <div class="container">
+    <div class="fade-up">
+      <div class="confirm__badge">
+        <span class="confirm__badge-dot"></span>
+        <span class="confirm__badge-text">Compra confirmada · Acesso liberado</span>
+      </div>
+      <p class="confirm__eyebrow">Protocolo Alta Conversão · Edição 2025</p>
+      <h1 class="confirm__title">
+        Bom. Você<br>
+        <em>tomou a decisão.</em>
+      </h1>
+      <p class="confirm__sub">
+        O Protocolo está pronto para download. Mas antes de começar, leia o que preparei para quem quer comprimir o tempo de resultado.
+      </p>
+      <a href="ebook.pdf" download="Protocolo Alta Conversao - Felippe Nobrega.pdf" class="btn--download">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        Baixar o Protocolo em PDF
+      </a>
+      <p class="confirm__note">PDF · 37 páginas · Acesso permanente · Atualizações inclusas</p>
+    </div>
+  </div>
+</section>
+
+<!-- ════════ PRÓXIMOS PASSOS ════════ -->
+<section id="proximos">
+  <div class="container fade-up">
+    <p class="proximos__label">O que fazer agora</p>
+    <h2 class="proximos__title">Seu plano de D+1 a D+90</h2>
+    <div class="proximos__steps">
+      <div class="proximos__step">
+        <p class="proximos__step-num">Semana 01</p>
+        <h3>Leia o Pilar 1 completo</h3>
+        <p>Mentalidade é a fundação. Não pule. Leia com caneta na mão e responda as perguntas ao fim de cada bloco.</p>
+      </div>
+      <div class="proximos__step">
+        <p class="proximos__step-num">Semana 02–04</p>
+        <h3>Execute o Roteiro de Posicionamento</h3>
+        <p>Aplique as mudanças no seu Instagram e na sua comunicação com clientes. O mercado começa a perceber aqui.</p>
+      </div>
+      <div class="proximos__step">
+        <p class="proximos__step-num">Mês 02–03</p>
+        <h3>Siga o Checklist dos 90 dias</h3>
+        <p>Disciplina de execução semana a semana. No D+90 você terá um resultado mensurável — ou sabe exatamente o que ajustar.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════ UPSELL — SESSÃO ESTRATÉGICA ════════ -->
+<section id="upsell">
+  <div class="container">
+    <div class="fade-up">
+      <p class="upsell__eyebrow">Oferta exclusiva para quem acabou de adquirir</p>
+      <h2 class="upsell__title">
+        O Protocolo te diz <em>o quê.</em><br>
+        A Sessão te diz <em>como</em> — no<br>
+        seu mercado, com o seu perfil.
+      </h2>
+      <p class="upsell__intro">
+        O ebook é o mapa. Mas um mapa não te diz qual rua evitar na sua cidade, quem são os clientes que já estão prontos para te contratar ou por que o seu posicionamento atual está repelindo o cliente que você quer. Isso é o que faço na sessão — uma análise cirúrgica, aplicada à sua operação real.
+      </p>
+    </div>
+
+    <div class="upsell__grid fade-up">
+      <!-- COLUNA ESQUERDA -->
+      <div>
+        <p style="font-family: var(--mono); font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--champagne); margin-bottom: 2rem;">O que acontece em 60 minutos</p>
+        <ul class="upsell__includes">
+          <li>
+            <div>
+              <p class="upsell__includes-title">Diagnóstico de posicionamento atual</p>
+              <p class="upsell__includes-desc">Análise do seu perfil digital, bio, linguagem e primeiros pontos de contato com o cliente. O que está afastando e o que pode ser corrigido esta semana.</p>
+            </div>
+          </li>
+          <li>
+            <div>
+              <p class="upsell__includes-title">Mapeamento do seu cliente-alvo real</p>
+              <p class="upsell__includes-desc">Quem é o cliente que você quer atrair, onde ele está e por que ainda não está te procurando. Filtro antes do funil — aplicado ao seu contexto.</p>
+            </div>
+          </li>
+          <li>
+            <div>
+              <p class="upsell__includes-title">Plano de 90 dias personalizado</p>
+              <p class="upsell__includes-desc">As ações prioritárias para a sua realidade — cidade, nicho e momento de carreira. Não é conselho genérico: é protocolo de operação com seu nome.</p>
+            </div>
+          </li>
+          <li>
+            <div>
+              <p class="upsell__includes-title">Gravação da sessão + documento de síntese</p>
+              <p class="upsell__includes-desc">Você sai com o plano documentado e a sessão gravada para consultar quando necessário. Nada se perde.</p>
+            </div>
+          </li>
+        </ul>
+
+        <div class="upsell__quote">
+          <blockquote>
+            "O ebook me deu o mapa. A sessão com o Felippe me mostrou onde eu estava, no mapa — e que rua pegar primeiro. Em 30 dias fechei o primeiro cliente acima de R$ 800k."
+          </blockquote>
+          <cite>— Rafael M. · Corretor · Recife · 8 anos de mercado</cite>
+        </div>
+
+        <div class="upsell__author" style="margin-top: 2rem;">
+          <div class="upsell__author-photo">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#A88752" stroke-width="1">
+              <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+            </svg>
+          </div>
+          <div>
+            <p class="upsell__author-name">Felippe Nóbrega</p>
+            <p class="upsell__author-role">Corretor · Estrategista Imobiliário · João Pessoa</p>
+            <p class="upsell__author-bio">
+              R$ 100M em VGV em 2025. Não falo de posicionamento como teoria — opero com isso todos os dias. A sessão é o que eu faria se fosse você: olhar de fora para dentro, com quem já esteve dentro.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- COLUNA DIREITA — CARD ── -->
+      <div>
+        <div class="upsell__card">
+          <span class="upsell__card-badge">Oferta para compradores do Protocolo</span>
+          <p class="upsell__card-name">Sessão Estratégica 1:1<br>com Felippe Nóbrega</p>
+          <p class="upsell__card-subtitle">60 minutos · Online · Agendamento imediato</p>
+
+          <p class="upsell__card-price-from">De R$ 997</p>
+          <p class="upsell__card-price">R$ 497</p>
+          <p class="upsell__card-price-note">Pagamento único · Exclusivo para compradores do Protocolo</p>
+
+          <div class="upsell__card-spots">
+            <span class="upsell__card-spots-dot"></span>
+            <p class="upsell__card-spots-text">Apenas 3 vagas por mês<br>Próxima disponibilidade: Maio 2026</p>
+          </div>
+
+          <a href="#" class="btn--upsell" onclick="alert('Link de agendamento será configurado aqui.')">
+            Quero minha Sessão Estratégica
+          </a>
+          <a href="#" class="btn--skip" onclick="return false;">
+            Não, vou seguir sozinho por agora
+          </a>
+
+          <div class="upsell__card-guarantee">
+            <div class="upsell__card-guarantee-icon">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#A88752" stroke-width="1.5">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+            </div>
+            <p class="upsell__card-guarantee-text">Garantia de satisfação<br>Se a sessão não gerar pelo menos 1 insight acionável, reembolso integral</p>
+          </div>
+        </div>
+
+        <p style="font-family: var(--mono); font-size: 0.58rem; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(201,195,184,0.3); margin-top: 1.5rem; line-height: 1.8;">
+          Esta oferta aparece apenas uma vez — exclusiva para quem acabou de adquirir o Protocolo. O valor retorna a R$ 997 no site.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════ FOOTER ════════ -->
+<footer>
+  <div class="container">
+    <div class="footer__inner">
+      <p class="footer__brand">Protocolo Alta Conversão · by Felippe Nóbrega · Edição 2025</p>
+      <nav class="footer__links">
+        <a href="#">Política de Privacidade</a>
+        <a href="#">Termos de Uso</a>
+        <a href="#">Contato</a>
+      </nav>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(el => {
+      if (el.isIntersecting) { el.target.classList.add('visible'); }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>

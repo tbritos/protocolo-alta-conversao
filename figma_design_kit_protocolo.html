@@ -1,0 +1,404 @@
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  .kit { font-family: var(--font-sans); color: var(--color-text-primary); padding: 1.5rem 0; }
+  .section { margin-bottom: 2.5rem; }
+  .section-label {
+    font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--color-text-secondary); margin-bottom: 1rem;
+    padding-bottom: 0.5rem; border-bottom: 0.5px solid var(--color-border-tertiary);
+  }
+  .copy-btn {
+    font-size: 11px; font-family: var(--font-mono); background: none;
+    border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md);
+    color: var(--color-text-secondary); padding: 2px 8px; cursor: pointer; margin-left: 8px;
+    transition: background 0.15s;
+  }
+  .copy-btn:hover { background: var(--color-background-secondary); }
+  .copy-btn.copied { color: var(--color-text-success); border-color: var(--color-border-success); }
+
+  /* CORES */
+  .colors-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .color-card {
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-md); overflow: hidden;
+  }
+  .color-swatch { height: 56px; }
+  .color-info { padding: 10px 12px; }
+  .color-name { font-size: 13px; font-weight: 500; margin-bottom: 2px; }
+  .color-hex { font-family: var(--font-mono); font-size: 12px; color: var(--color-text-secondary); }
+  .color-use { font-size: 11px; color: var(--color-text-tertiary); margin-top: 4px; }
+
+  /* TIPOGRAFIA */
+  .typo-table { width: 100%; border-collapse: collapse; }
+  .typo-table th {
+    font-size: 11px; font-weight: 500; color: var(--color-text-secondary);
+    text-align: left; padding: 6px 12px; background: var(--color-background-secondary);
+    border: 0.5px solid var(--color-border-tertiary);
+  }
+  .typo-table td {
+    padding: 10px 12px; border: 0.5px solid var(--color-border-tertiary);
+    font-size: 13px; color: var(--color-text-primary); vertical-align: middle;
+  }
+  .typo-table tr:hover td { background: var(--color-background-secondary); }
+  .preview-serif { font-family: 'Georgia', serif; }
+  .preview-sans { font-family: var(--font-sans); }
+  .preview-mono { font-family: var(--font-mono); }
+  .tag-primary {
+    display: inline-block; font-size: 11px; padding: 2px 8px;
+    border-radius: var(--border-radius-md); font-weight: 500;
+    background: var(--color-background-info); color: var(--color-text-info);
+  }
+  .tag-secondary {
+    display: inline-block; font-size: 11px; padding: 2px 8px;
+    border-radius: var(--border-radius-md); font-weight: 500;
+    background: var(--color-background-secondary); color: var(--color-text-secondary);
+    border: 0.5px solid var(--color-border-tertiary);
+  }
+
+  /* ESPAÇAMENTOS */
+  .spacing-row { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+  .spacing-bar { height: 8px; background: var(--color-background-info); border-radius: 2px; }
+  .spacing-label { font-size: 12px; font-family: var(--font-mono); color: var(--color-text-secondary); min-width: 80px; }
+  .spacing-val { font-size: 12px; color: var(--color-text-tertiary); }
+
+  /* PÁGINAS */
+  .pages-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .page-card {
+    border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md);
+    padding: 12px 14px;
+  }
+  .page-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+  .page-num { font-family: var(--font-mono); font-size: 11px; color: var(--color-text-tertiary); }
+  .page-title { font-size: 13px; font-weight: 500; margin-bottom: 2px; }
+  .page-bg {
+    display: inline-block; font-size: 10px; padding: 2px 6px;
+    border-radius: var(--border-radius-md); font-weight: 500;
+  }
+  .page-elements { margin-top: 8px; }
+  .page-el { font-size: 11px; color: var(--color-text-secondary); padding: 3px 0; border-bottom: 0.5px solid var(--color-border-tertiary); display: flex; gap: 6px; }
+  .page-el:last-child { border-bottom: none; }
+  .page-el::before { content: '—'; color: var(--color-text-tertiary); flex-shrink: 0; }
+
+  /* REGRAS */
+  .rules-list { list-style: none; }
+  .rules-list li {
+    font-size: 13px; color: var(--color-text-primary); padding: 10px 14px;
+    border-bottom: 0.5px solid var(--color-border-tertiary);
+    display: flex; gap: 10px; align-items: flex-start;
+  }
+  .rules-list li:first-child { border-top: 0.5px solid var(--color-border-tertiary); }
+  .rules-list li::before { content: '—'; color: var(--color-text-tertiary); flex-shrink: 0; font-family: var(--font-mono); }
+</style>
+
+<div class="kit">
+  <h2 class="sr-only">Kit de design tokens — Protocolo Alta Conversão para Figma</h2>
+
+  <!-- CORES -->
+  <div class="section">
+    <p class="section-label">01 · Paleta de cores</p>
+    <div class="colors-grid">
+
+      <div class="color-card">
+        <div class="color-swatch" style="background:#0D0D0D;"></div>
+        <div class="color-info">
+          <div class="color-name">Obsidiana</div>
+          <div class="color-hex">#0D0D0D <button class="copy-btn" onclick="copyColor(this,'#0D0D0D')">copiar</button></div>
+          <div class="color-use">Texto principal · títulos · 25% ocupação</div>
+        </div>
+      </div>
+
+      <div class="color-card">
+        <div class="color-swatch" style="background:#FAF7F2; border-bottom: 0.5px solid #E8E3DA;"></div>
+        <div class="color-info">
+          <div class="color-name">Alabastro</div>
+          <div class="color-hex">#FAF7F2 <button class="copy-btn" onclick="copyColor(this,'#FAF7F2')">copiar</button></div>
+          <div class="color-use">Fundo principal · respiração · 70%</div>
+        </div>
+      </div>
+
+      <div class="color-card">
+        <div class="color-swatch" style="background:#A88752;"></div>
+        <div class="color-info">
+          <div class="color-name">Champagne</div>
+          <div class="color-hex">#A88752 <button class="copy-btn" onclick="copyColor(this,'#A88752')">copiar</button></div>
+          <div class="color-use">Acento · CTA · detalhes · 3–5%</div>
+        </div>
+      </div>
+
+      <div class="color-card">
+        <div class="color-swatch" style="background:#3A3A3A;"></div>
+        <div class="color-info">
+          <div class="color-name">Grafite</div>
+          <div class="color-hex">#3A3A3A <button class="copy-btn" onclick="copyColor(this,'#3A3A3A')">copiar</button></div>
+          <div class="color-use">Texto secundário · subtítulos</div>
+        </div>
+      </div>
+
+      <div class="color-card">
+        <div class="color-swatch" style="background:#C9C3B8;"></div>
+        <div class="color-info">
+          <div class="color-name">Névoa</div>
+          <div class="color-hex">#C9C3B8 <button class="copy-btn" onclick="copyColor(this,'#C9C3B8')">copiar</button></div>
+          <div class="color-use">Divisores · bordas sutis</div>
+        </div>
+      </div>
+
+      <div class="color-card">
+        <div class="color-swatch" style="background:#F0EBE0; border-bottom: 0.5px solid #E8E3DA;"></div>
+        <div class="color-info">
+          <div class="color-name">Creme</div>
+          <div class="color-hex">#F0EBE0 <button class="copy-btn" onclick="copyColor(this,'#F0EBE0')">copiar</button></div>
+          <div class="color-use">Variação de fundo · cards</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- TIPOGRAFIA -->
+  <div class="section">
+    <p class="section-label">02 · Escala tipográfica</p>
+    <table class="typo-table">
+      <thead>
+        <tr>
+          <th>Elemento</th>
+          <th>Família</th>
+          <th>Tamanho</th>
+          <th>Peso</th>
+          <th>Preview</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="tag-primary">Capa / Display</span></td>
+          <td class="preview-mono">Playfair Display</td>
+          <td>42pt / 56px</td>
+          <td>Regular 400</td>
+          <td class="preview-serif" style="font-size:20px;">Protocolo</td>
+        </tr>
+        <tr>
+          <td><span class="tag-primary">H1 · Abertura</span></td>
+          <td class="preview-mono">Playfair Display</td>
+          <td>32pt / 43px</td>
+          <td>Regular 400</td>
+          <td class="preview-serif" style="font-size:17px;">Mentalidade</td>
+        </tr>
+        <tr>
+          <td><span class="tag-primary">H2 · Seção</span></td>
+          <td class="preview-mono">Playfair Display</td>
+          <td>22pt / 29px</td>
+          <td>Regular 400</td>
+          <td class="preview-serif" style="font-size:15px;">O teto invisível</td>
+        </tr>
+        <tr>
+          <td><span class="tag-primary">H3 · Subseção</span></td>
+          <td class="preview-mono">Playfair Display</td>
+          <td>14pt / 19px</td>
+          <td>Medium 500</td>
+          <td class="preview-serif" style="font-size:13px;font-weight:500;">Os dois modelos</td>
+        </tr>
+        <tr>
+          <td><span class="tag-secondary">Body principal</span></td>
+          <td class="preview-mono">Inter</td>
+          <td>11pt / 15px</td>
+          <td>Regular 400</td>
+          <td class="preview-sans" style="font-size:13px;">Texto corrido do conteúdo</td>
+        </tr>
+        <tr>
+          <td><span class="tag-secondary">Pullquote</span></td>
+          <td class="preview-mono">Playfair Display</td>
+          <td>13pt / 17px</td>
+          <td>Italic 400</td>
+          <td class="preview-serif" style="font-size:13px;font-style:italic;">"Citação em destaque"</td>
+        </tr>
+        <tr>
+          <td><span class="tag-secondary">Label / Eyebrow</span></td>
+          <td class="preview-mono">IBM Plex Mono</td>
+          <td>7pt / 9px</td>
+          <td>Regular 400</td>
+          <td class="preview-mono" style="font-size:11px;letter-spacing:0.18em;text-transform:uppercase;">PILAR 01 DE 07</td>
+        </tr>
+        <tr>
+          <td><span class="tag-secondary">Stat callout</span></td>
+          <td class="preview-mono">Playfair Display</td>
+          <td>28pt / 37px</td>
+          <td>Regular 400</td>
+          <td class="preview-serif" style="font-size:22px;color:#A88752;">90</td>
+        </tr>
+        <tr>
+          <td><span class="tag-secondary">Rodapé</span></td>
+          <td class="preview-mono">IBM Plex Mono</td>
+          <td>7pt / 9px</td>
+          <td>Regular 400</td>
+          <td class="preview-mono" style="font-size:10px;color:#C9C3B8;letter-spacing:0.12em;">PROTOCOLO ALTA CONVERSÃO · 2025</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ESPAÇAMENTOS -->
+  <div class="section">
+    <p class="section-label">03 · Grid e espaçamentos (base 8px)</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;">
+      <div>
+        <p style="font-size:12px;font-weight:500;margin-bottom:10px;color:var(--color-text-secondary);">Escala de espaçamento</p>
+        <div class="spacing-row"><div class="spacing-bar" style="width:8px;"></div><span class="spacing-label">xs — 4px</span><span class="spacing-val">espaços internos mínimos</span></div>
+        <div class="spacing-row"><div class="spacing-bar" style="width:16px;"></div><span class="spacing-label">sm — 8px</span><span class="spacing-val">elementos próximos</span></div>
+        <div class="spacing-row"><div class="spacing-bar" style="width:24px;"></div><span class="spacing-label">md — 16px</span><span class="spacing-val">elementos relacionados</span></div>
+        <div class="spacing-row"><div class="spacing-bar" style="width:40px;"></div><span class="spacing-label">lg — 32px</span><span class="spacing-val">blocos internos</span></div>
+        <div class="spacing-row"><div class="spacing-bar" style="width:64px;"></div><span class="spacing-label">xl — 64px</span><span class="spacing-val">entre seções</span></div>
+        <div class="spacing-row"><div class="spacing-bar" style="width:100px;"></div><span class="spacing-label">2xl — 96px</span><span class="spacing-val">grandes blocos</span></div>
+      </div>
+      <div>
+        <p style="font-size:12px;font-weight:500;margin-bottom:10px;color:var(--color-text-secondary);">Grid do ebook (A4)</p>
+        <ul class="rules-list">
+          <li>Formato: A4 — 210 × 297mm</li>
+          <li>Margens: 28mm todas as laterais</li>
+          <li>Área útil: 154 × 241mm</li>
+          <li>Linha de rodapé: 12mm da borda inferior</li>
+          <li>Barra lateral (capas): 4mm esquerda, cor Champagne</li>
+          <li>Número decorativo (capas): canto sup. direito, 72pt, 15% opacidade</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- BLUEPRINT PÁGINAS -->
+  <div class="section">
+    <p class="section-label">04 · Blueprint página a página</p>
+    <div class="pages-grid">
+
+      <div class="page-card">
+        <div class="page-card-header">
+          <div>
+            <div class="page-title">Capa</div>
+            <span class="page-bg" style="background:#0D0D0D;color:#A88752;">Obsidiana</span>
+          </div>
+          <span class="page-num">p. 1</span>
+        </div>
+        <div class="page-elements">
+          <div class="page-el">Eyebrow mono — champagne, letra espaçada</div>
+          <div class="page-el">Título 42pt serif — Alabastro + Champagne itálico</div>
+          <div class="page-el">Régua horizontal 0.4pt Grafite</div>
+          <div class="page-el">Subtítulo 10pt sans — Névoa, peso 300</div>
+          <div class="page-el">Nome autor 13pt serif + cargo mono</div>
+          <div class="page-el">Edição mono — canto inf. direito</div>
+          <div class="page-el">Barra 4mm Champagne — esquerda</div>
+        </div>
+      </div>
+
+      <div class="page-card">
+        <div class="page-card-header">
+          <div>
+            <div class="page-title">Folha de guarda</div>
+            <span class="page-bg" style="background:#F0EBE0;color:#3A3A3A;">Creme</span>
+          </div>
+          <span class="page-num">p. 2</span>
+        </div>
+        <div class="page-elements">
+          <div class="page-el">Centralizado vertical e horizontal</div>
+          <div class="page-el">Citação 16pt serif itálico — Obsidiana</div>
+          <div class="page-el">Assinatura mono — Champagne, espaçado</div>
+        </div>
+      </div>
+
+      <div class="page-card">
+        <div class="page-card-header">
+          <div>
+            <div class="page-title">Sumário</div>
+            <span class="page-bg" style="background:#FAF7F2;color:#3A3A3A;border:0.5px solid #C9C3B8;">Alabastro</span>
+          </div>
+          <span class="page-num">p. 3</span>
+        </div>
+        <div class="page-elements">
+          <div class="page-el">Eyebrow + H1 26pt serif</div>
+          <div class="page-el">Régua 0.4pt Névoa</div>
+          <div class="page-el">Itens: num mono + nome serif + nº pág</div>
+          <div class="page-el">Separadores 0.4pt entre cada item</div>
+        </div>
+      </div>
+
+      <div class="page-card">
+        <div class="page-card-header">
+          <div>
+            <div class="page-title">Abertura de pilar</div>
+            <span class="page-bg" style="background:#0D0D0D;color:#A88752;">Obsidiana</span>
+          </div>
+          <span class="page-num">p. 6, 9, 12…</span>
+        </div>
+        <div class="page-elements">
+          <div class="page-el">Número 72pt decorativo — 15% opacidade, sup. dir.</div>
+          <div class="page-el">Label mono — Champagne, inferior</div>
+          <div class="page-el">Título 32pt serif — Alabastro + Champagne itálico</div>
+          <div class="page-el">Régua 2cm Champagne — 0.4pt</div>
+          <div class="page-el">Lead 10pt sans — Névoa, peso 300</div>
+          <div class="page-el">Barra 4mm Champagne — esquerda</div>
+        </div>
+      </div>
+
+      <div class="page-card">
+        <div class="page-card-header">
+          <div>
+            <div class="page-title">Página de conteúdo</div>
+            <span class="page-bg" style="background:#FAF7F2;color:#3A3A3A;border:0.5px solid #C9C3B8;">Alabastro</span>
+          </div>
+          <span class="page-num">p. 7, 8, 10…</span>
+        </div>
+        <div class="page-elements">
+          <div class="page-el">Eyebrow mono + régua extensível</div>
+          <div class="page-el">H2 22pt serif — Obsidiana</div>
+          <div class="page-el">Body 11pt Inter — Grafite, entrelinha 1.8</div>
+          <div class="page-el">Pullquote: borda esq. 2pt Champagne + itálico</div>
+          <div class="page-el">Card destaque: fundo Obsidiana + label Champagne</div>
+          <div class="page-el">Lista: traço — Champagne + texto Grafite</div>
+          <div class="page-el">Stat: número 28pt Champagne + label mono</div>
+        </div>
+      </div>
+
+      <div class="page-card">
+        <div class="page-card-header">
+          <div>
+            <div class="page-title">Encerramento</div>
+            <span class="page-bg" style="background:#0D0D0D;color:#A88752;">Obsidiana</span>
+          </div>
+          <span class="page-num">p. 24</span>
+        </div>
+        <div class="page-elements">
+          <div class="page-el">Título 28pt serif — Alabastro + Champagne itálico</div>
+          <div class="page-el">Régua 0.4pt Grafite</div>
+          <div class="page-el">Body 10pt sans — Névoa</div>
+          <div class="page-el">CTA mono — Champagne, espaçado</div>
+          <div class="page-el">Barra 4mm Champagne — esquerda</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- REGRAS -->
+  <div class="section">
+    <p class="section-label">05 · Regras invioláveis do Brand Book</p>
+    <ul class="rules-list">
+      <li>Nunca usar mais de 2 famílias tipográficas por página (serifada + sans ou mono)</li>
+      <li>Títulos serifados sempre em peso Regular 400 — nunca Bold</li>
+      <li>Champagne aparece no máximo em 3–5% da área de cada página</li>
+      <li>Espaço em branco é luxo — nunca saturar a página</li>
+      <li>Réguas horizontais: sempre 0.4pt, cor Névoa ou Grafite — nunca Obsidiana sólido</li>
+      <li>Barra lateral das capas: exatamente 4mm, cor Champagne sólido</li>
+      <li>Fotos do autor: luz natural, alfaiataria, expressão sóbria — nunca flash, estúdio branco ou pose "superman"</li>
+      <li>Teste de coerência antes de qualquer página: parece editorial ou parece infoproduto?</li>
+    </ul>
+  </div>
+
+</div>
+
+<script>
+function copyColor(btn, hex) {
+  navigator.clipboard.writeText(hex).then(() => {
+    btn.textContent = 'copiado';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'copiar'; btn.classList.remove('copied'); }, 1500);
+  });
+}
+</script>
